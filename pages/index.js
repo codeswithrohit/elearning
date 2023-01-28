@@ -3,34 +3,32 @@
 /* eslint-disable @next/next/no-img-element */
 import Head from 'next/head'
 import React, { useState, useEffect } from 'react';
-import Posts from '../components/Posts';
-import Pagination from '../components/Pagination';
 import axios from 'axios';
 
+const ITEMS_PER_PAGE = 10
+
 export default function Home() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [items, setItems] = useState([])
+  const [totalPages, setTotalPages] = useState(0)
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      const res = await axios.get('https://jsonplaceholder.typicode.com/posts');
-      setPosts(res.data);
-      setLoading(false);
-    };
+    // Fetch data from API on component mount
+    fetchData(currentPage)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-    fetchPosts();
-  }, []);
+  const fetchData = async (page) => {
+    const offset = (page - 1) * ITEMS_PER_PAGE
+    const res = await axios.get(`https://jsonplaceholder.typicode.com/photos?_start=${offset}&_limit=${ITEMS_PER_PAGE}`)
+    setItems(res.data)
+    setTotalPages(Math.ceil(res.headers['x-total-count'] / ITEMS_PER_PAGE))
+  }
 
-  // Get current posts
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  // Change page
-  const paginate = pageNumber => setCurrentPage(pageNumber);
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    fetchData(page)
+  }
 
   
   return (
@@ -55,12 +53,34 @@ export default function Home() {
       <h1 className='text-orange-600 m-10 font-bold text-2xl text-center'>
           My Small Project for Creative Web Mall (India) Pvt. Ltd.
       </h1>
-      <Posts posts={currentPosts} loading={loading} />
-      <Pagination
-        postsPerPage={postsPerPage}
-        totalPosts={posts.length}
-        paginate={paginate}
-      />
+      <div>
+      <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4'>
+              {items.map((item) => (
+                  <div
+                      key={item.id}
+                      className='border shadow-lg rounded-lg hover:scale-105 duration-300'
+                  >
+
+                      <div className='flex justify-between px-2 py-4'>
+                          <p className='font-bold text-pink-500'>{item.title}</p>
+
+                      </div>
+                  </div>
+              ))}
+          </div>
+
+      <div class="flex space-x-16 justify-center mt-10">
+        {currentPage > 1 && (
+          <button class="inline-block px-6 py-2.5 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out" onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
+        )}
+
+<span>Page No. {currentPage} of {totalPages}</span>
+
+        {currentPage < totalPages && (
+          <button  class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out" onClick={() => handlePageChange(currentPage + 1)}>Next</button>
+        )}
+      </div>
+    </div>
     </div>
 
 

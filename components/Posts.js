@@ -7,14 +7,14 @@ const Posts = ({ posts, loading }) => {
 
   return (
     <><div className='grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4'>
-              {posts.map(post => (
+              {items.map((item) => (
                   <div
-                      key={post._id}
+                      key={item.id}
                       className='border shadow-lg rounded-lg hover:scale-105 duration-300'
                   >
 
                       <div className='flex justify-between px-2 py-4'>
-                          <p className='font-bold text-pink-500'>{post.title}</p>
+                          <p className='font-bold text-pink-500'>{item.title}</p>
 
                       </div>
                   </div>
