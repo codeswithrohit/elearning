@@ -9,12 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^16.5.2",
+    "@react-native-firebase/firestore": "^16.5.2",
+    "@react-native-firebase/storage": "^16.5.2",
+    "@react-pdf-viewer/core": "^3.10.0",
+    "@react-pdf-viewer/default-layout": "^3.10.0",
+    "axios": "^1.2.5",
+    "firebase": "^9.16.0",
     "next": "13.1.5",
+    "pdfjs-dist": "^3.1.81",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-data-grid": "^7.0.0-beta.22",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.7.1",
+    "react-pdf": "^6.2.2"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.13",
     "eslint": "8.32.0",
-    "eslint-config-next": "13.1.5"
+    "eslint-config-next": "13.1.5",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.4"
   }
 }
