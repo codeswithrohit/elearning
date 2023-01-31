@@ -63,7 +63,7 @@ export default function Home() {
           My Small Project for Creative Web Mall (India) Pvt. Ltd.
       </h1>
         
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4 row m-2">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-4 row m-2">
         {items.map((item) => {
           return (
             <div key={item.id} className="col-sm-6 col-md-4 v my-2">
