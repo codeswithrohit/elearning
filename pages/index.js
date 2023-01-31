@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 
 export default function Home() {
-  const [items, setItems] = useState([]);
+  const [datas, setDatas] = useState([]);
 
   const [pageCount, setpageCount] = useState(0);
 
@@ -22,7 +22,7 @@ export default function Home() {
       const data = await res.json();
       const total = res.headers.get("x-total-count");
       setpageCount(Math.ceil(total / limit));
-      setItems(data);
+      setDatas(data);
     };
 
     getComments();
@@ -42,7 +42,7 @@ export default function Home() {
 
     const commentsFormServer = await fetchComments(currentPage);
 
-    setItems(commentsFormServer);
+    setDatas(commentsFormServer);
     // scroll to the top
     //window.scrollTo(0, 0)
   };
@@ -64,7 +64,7 @@ export default function Home() {
       </h1>
         
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-4 row m-2">
-        {items.map((item) => {
+        {datas.map((item) => {
           return (
             <div key={item.id} className="col-sm-6 col-md-4 v my-2">
               <div className="card shadow-sm w-100" style={{ minHeight: 225 }}>
