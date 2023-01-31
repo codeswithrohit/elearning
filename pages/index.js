@@ -2,33 +2,50 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 /* eslint-disable @next/next/no-img-element */
 import Head from 'next/head'
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import ReactPaginate from "react-paginate";
+import { useEffect, useState } from "react";
 
-const ITEMS_PER_PAGE = 10
+
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [items, setItems] = useState([])
-  const [totalPages, setTotalPages] = useState(0)
+  const [items, setItems] = useState([]);
+
+  const [pageCount, setpageCount] = useState(0);
+
+  let limit = 10;
 
   useEffect(() => {
-    // Fetch data from API on component mount
-    fetchData(currentPage)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    const getComments = async () => {
+      const res = await fetch(
+         `https://jsonplaceholder.typicode.com/comments?_page=1&_limit=${limit}`
+      );
+      const data = await res.json();
+      const total = res.headers.get("x-total-count");
+      setpageCount(Math.ceil(total / limit));
+      setItems(data);
+    };
 
-  const fetchData = async (page) => {
-    const offset = (page - 1) * ITEMS_PER_PAGE
-    const res = await axios.get(`https://jsonplaceholder.typicode.com/photos?_start=${offset}&_limit=${ITEMS_PER_PAGE}`)
-    setItems(res.data)
-    setTotalPages(Math.ceil(res.headers['x-total-count'] / ITEMS_PER_PAGE))
-  }
+    getComments();
+  }, [limit]);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page)
-    fetchData(page)
-  }
+  const fetchComments = async (currentPage) => {
+    const res = await fetch(
+      `https://jsonplaceholder.typicode.com/comments?_page=${currentPage}&_limit=${limit}`
+    );
+    const data = await res.json();
+    return data;
+  };
+
+  const handlePageClick = async (data) => {
+
+    let currentPage = data.selected + 1;
+
+    const commentsFormServer = await fetchComments(currentPage);
+
+    setItems(commentsFormServer);
+    // scroll to the top
+    //window.scrollTo(0, 0)
+  };
 
   
   return (
@@ -40,47 +57,48 @@ export default function Home() {
       </Head>
       
 
-	  
-
-
-
-
-
-
-
  
-    <div className='container mt-5'>
+      <div className="container">
       <h1 className='text-orange-600 m-10 font-bold text-2xl text-center'>
           My Small Project for Creative Web Mall (India) Pvt. Ltd.
       </h1>
-      <div>
-      <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4'>
-              {items.map((item) => (
-                  <div
-                      key={item.id}
-                      className='border shadow-lg rounded-lg hover:scale-105 duration-300'
-                  >
-
-                      <div className='flex justify-between px-2 py-4'>
-                          <p className='font-bold text-pink-500'>{item.title}</p>
-
-                      </div>
-                  </div>
-              ))}
-          </div>
-
-      <div class="flex space-x-16 justify-center mt-10">
-        {currentPage > 1 && (
-          <button class="inline-block px-6 py-2.5 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out" onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
-        )}
-
-<span>Page No. {currentPage} of {totalPages}</span>
-
-        {currentPage < totalPages && (
-          <button  class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out" onClick={() => handlePageChange(currentPage + 1)}>Next</button>
-        )}
+        
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4 row m-2">
+        {items.map((item) => {
+          return (
+            <div key={item.id} className="col-sm-6 col-md-4 v my-2">
+              <div className="card shadow-sm w-100" style={{ minHeight: 225 }}>
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2 text-muted text-center text-pink-500">
+                    {item.email}
+                  </h6>
+                  <p className="card-text font-semibold">{item.body}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+
+      <ReactPaginate
+        previousLabel={"previous"}
+        nextLabel={"next"}
+        breakLabel={"..."}
+        pageCount={pageCount}
+        marginPagesDisplayed={4}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageClick}
+        containerClassName={"flex justify-center"}
+        pageClassName={"flex list-style-none"}
+        pageLinkClassName={"page-link text-xl py-3 px-6 relative block border-0 bg-transparent outline-none transition-all duration-300 rounded-md text-gray-800 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"}
+        previousClassName={"page-item disabled"}
+        previousLinkClassName={"page-link text-xl py-3 px-6 relative block border-0 bg-transparent outline-none transition-all duration-300 rounded-md text-gray-500 pointer-events-none focus:shadow-none"}
+        nextClassName={"page-item disabled"}
+        nextLinkClassName={"page-link text-xl py-3 px-6 relative block border-0 bg-transparent outline-none transition-all duration-300 rounded-md text-gray-500 pointer-events-none focus:shadow-none"}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link text-xl py-3 px-6 relative block border-0 bg-transparent outline-none transition-all duration-300 rounded-md text-gray-800 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"}
+        activeClassName={"active"}
+      />
     </div>
 
 
